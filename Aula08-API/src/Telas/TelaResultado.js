@@ -1,15 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import { FlatList, Image, ImageBackground, StyleSheet, Text, TextInput, View } from 'react-native';
-import {Ionicons} from 'react-native-vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList, ImageBackground, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image'; 
 import { useState } from 'react';
+import Cabecalho from '../Components/Cabecalho';
 import axios from 'axios';
 import API_KEY from "../API_KEY"
-import FastImage from 'react-native-fast-image'
+const{width,height}=Dimensions.get("window")
+const IMAGE_WIDTH = width
 
 export default function TelaResultado({route,navigation}) {
   const escolha = route.params.escolha
-  const link = `https://api.giphy.com/v1/${escolha}/search` 
+  const link = `http://api.giphy.com/v1/${escolha}/search` 
   const[textoPesquisa, setTextPesquisa] = useState("")
   const[dados, setDados] = useState([])
   
@@ -20,10 +21,9 @@ export default function TelaResultado({route,navigation}) {
         params:{
           api_key:API_KEY,
           q:textPesquisa,
-          lang:"pt"
         }
       })
-      //console.log(resultado.data.data)
+
       setDados(resultado.data.data)
 
     }catch(err){
@@ -37,34 +37,28 @@ export default function TelaResultado({route,navigation}) {
       source={require("../../assets/BG.png")}
       style={styles.container}
     >
-      <SafeAreaView style={{flexDirection:'row', justifyContent:"space-between"}}>
-        <Ionicons 
-        name="chevron-back" 
-        size={40} 
-        color="white"
-        onPress={()=> navigation.goBack()}
-        />
-        <TextInput 
-        placeholder='Digite sua pesquisa' 
-        style={styles.input}
-        autoCapitalize='none'
-        autoCorrect={false}
-        value={textoPesquisa}
-        onChangeText={(value)=>setTextPesquisa(value)}
-        />
-        <Ionicons name="search" size={40} color="white" onPress={()=>solicitarDados(textoPesquisa)}/>
-      </SafeAreaView>
+      <Cabecalho
+        navigation={navigation}
+        text={textoPesquisa}
+        setText = {setTextPesquisa}
+        solicitarDados={solicitarDados}
+
+      />
       
-      <FlatList 
+      <FlatList
         data={dados}
-        renderItem={({item})=>{
-          console.log(item.images)
-          return(
-            <Image 
-              style={{width:250,height:250}}
-              source={{uri:item.images.original.url}}
-              resizeMode={FastImage.resizeMode.contain}
-            />
+        numColumns={2}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity onPress={()=>navigation.navigate("TelaDetalhes",{item:item})}>
+              <Image
+                style={styles.image}
+                source={{ uri: item.images.preview_gif.url }} />
+            </TouchableOpacity>
+              
+            
+             
+
           )
         }}
       />
@@ -75,8 +69,11 @@ export default function TelaResultado({route,navigation}) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff'
+    flex: 1
+  },
+  image: {
+    width: IMAGE_WIDTH/2,
+    height: IMAGE_WIDTH/2
   },
   input: {
     flex:1,
