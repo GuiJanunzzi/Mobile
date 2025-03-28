@@ -1,7 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
-import { FlatList, ImageBackground, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { FlatList, ImageBackground, StyleSheet, Dimensions, TouchableOpacity, Keyboard} from 'react-native';
 import { Image } from 'expo-image'; 
 import { useState } from 'react';
+import TextoInfo from '../Components/TextoInfo';
+import Loading from '../Components/Loading';
+
 import Cabecalho from '../Components/Cabecalho';
 import axios from 'axios';
 import API_KEY from "../API_KEY"
@@ -11,11 +13,16 @@ const IMAGE_WIDTH = width
 export default function TelaResultado({route,navigation}) {
   const escolha = route.params.escolha
   const link = `http://api.giphy.com/v1/${escolha}/search` 
+
   const[textoPesquisa, setTextPesquisa] = useState("")
   const[dados, setDados] = useState([])
+  const[showMessage, setShowMessage] = useState(true)
+  const[isLoading, setIsLoading] = useState(false)
   
   
   const solicitarDados = async (textPesquisa)  => {
+    Keyboard.dismiss()
+    setIsLoading(true)
     try{
       const resultado = await axios.get(link,{
         params:{
@@ -23,9 +30,9 @@ export default function TelaResultado({route,navigation}) {
           q:textPesquisa,
         }
       })
-
+      setShowMessage(false)
+      setIsLoading(false)
       setDados(resultado.data.data)
-
     }catch(err){
       console.log(err)
     }
@@ -42,12 +49,17 @@ export default function TelaResultado({route,navigation}) {
         text={textoPesquisa}
         setText = {setTextPesquisa}
         solicitarDados={solicitarDados}
-
       />
       
       <FlatList
         data={dados}
         numColumns={2}
+        ListHeaderComponent={
+          <>
+            <TextoInfo showMessage={showMessage}/>
+            <Loading isLoading={isLoading}/>
+          </>
+        }
         renderItem={({ item }) => {
           return (
             <TouchableOpacity onPress={()=>navigation.navigate("TelaDetalhes",{item:item})}>
@@ -55,10 +67,6 @@ export default function TelaResultado({route,navigation}) {
                 style={styles.image}
                 source={{ uri: item.images.preview_gif.url }} />
             </TouchableOpacity>
-              
-            
-             
-
           )
         }}
       />
@@ -73,7 +81,9 @@ const styles = StyleSheet.create({
   },
   image: {
     width: IMAGE_WIDTH/2,
-    height: IMAGE_WIDTH/2
+    height: IMAGE_WIDTH/2,
+    margin:IMAGE_WIDTH*0.03,
+    borderRadius: 10
   },
   input: {
     flex:1,

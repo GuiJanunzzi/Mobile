@@ -1,11 +1,11 @@
 import { Image } from "expo-image";
-import { Text, ImageBackground, StyleSheet, View } from "react-native";
+import { Text, ImageBackground, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "react-native-vector-icons"
 
 export default function TelaDetalhes({route,navigation}){
     const dados = route.params.item
-    console.log(dados)
+
     return(
         <ImageBackground
             source={require("../../assets/BG.png")}
@@ -22,16 +22,21 @@ export default function TelaDetalhes({route,navigation}){
                 </View>
 
                 <View style={styles.imageContainer}>
-                    <Image
-                        style={{flex:1}}
-                        source={{uri:dados.images.original.url}}
-                    />
+                    <TouchableOpacity style={{flex:1}} onPress={()=>Linking.openURL(dados.images.original.url)}>
+                        <Image
+                            style={{flex:1}}
+                            source={{uri:dados.images.original.url}}
+                        />
+                    </TouchableOpacity>
                 </View>
 
                 <View>
                     <Text style={{fontSize:20, color:"white"}}>{dados.title}</Text>
-                    <Ionicons name="globe" size={40} color="white"/>
+
+                    
+                    <Ionicons name="globe" size={40} color="white" onPress={()=>Linking.openURL(dados.images.original.url)}/>
                 </View>
+
             </SafeAreaView>
 
         </ImageBackground>
