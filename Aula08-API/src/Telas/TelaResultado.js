@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { useState } from 'react';
 import TextoInfo from '../Components/TextoInfo';
 import Loading from '../Components/Loading';
+import Error from '../Components/Error';
 
 import Cabecalho from '../Components/Cabecalho';
 import axios from 'axios';
@@ -18,6 +19,7 @@ export default function TelaResultado({route,navigation}) {
   const[dados, setDados] = useState([])
   const[showMessage, setShowMessage] = useState(true)
   const[isLoading, setIsLoading] = useState(false)
+  const[showError, setShowError] = useState(false)
   
   
   const solicitarDados = async (textPesquisa)  => {
@@ -35,6 +37,9 @@ export default function TelaResultado({route,navigation}) {
       setDados(resultado.data.data)
     }catch(err){
       console.log(err)
+      setShowMessage(false)
+      setIsLoading(false)
+      setShowError(true)
     }
     
   }
@@ -58,6 +63,7 @@ export default function TelaResultado({route,navigation}) {
           <>
             <TextoInfo showMessage={showMessage}/>
             <Loading isLoading={isLoading}/>
+            <Error showError={showError}/>
           </>
         }
         renderItem={({ item }) => {
@@ -80,8 +86,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image: {
-    width: IMAGE_WIDTH/2,
-    height: IMAGE_WIDTH/2,
+    width: IMAGE_WIDTH/2.3,
+    height: IMAGE_WIDTH/2.3,
     margin:IMAGE_WIDTH*0.03,
     borderRadius: 10
   },

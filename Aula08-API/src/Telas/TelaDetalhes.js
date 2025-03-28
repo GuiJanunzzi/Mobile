@@ -5,7 +5,7 @@ import { Ionicons } from "react-native-vector-icons"
 
 export default function TelaDetalhes({route,navigation}){
     const dados = route.params.item
-
+    console.log(dados)
     return(
         <ImageBackground
             source={require("../../assets/BG.png")}
