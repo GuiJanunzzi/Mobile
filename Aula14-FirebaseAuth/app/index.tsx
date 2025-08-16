@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../services/firebaseConfig';
 
 export default function LoginScreen() {
   // Estados para armazenar os valores digitados
@@ -33,10 +35,37 @@ export default function LoginScreen() {
       Alert.alert('Atenção', 'Preencha todos os campos!');
       return;
     }
-    Alert.alert('Sucesso ao logar', `Usuário logado com sucesso!`);
-    // Aqui você poderia fazer um fetch/axios para enviar ao backend
+    //Backend do login
+    signInWithEmailAndPassword(auth, email, senha)
+      .then(async(userCredential) => {
+ 
+        const user = userCredential.user;
+        await AsyncStorage.setItem('@user',JSON.stringify(user))
+        router.push('/HomeScreen')
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("Error: ", errorMessage);
+        
+      });
   };
 
+  const esqueceuSenha = () =>{
+    if(!email){
+      alert("Digite o e-mail para recuperar a senha")
+      return
+    }
+    sendPasswordResetEmail(auth,email)
+      .then(()=>{
+        alert("Email de recuperação enviado")
+      })
+      .catch((error)=>{
+        console.log("Error",error.message)
+        alert("Erro ao enviar e-mail de reset de senha")
+      })
+
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Realizar login</Text>
@@ -69,6 +98,8 @@ export default function LoginScreen() {
       </TouchableOpacity>
 
       <Link href="CadastrarScreen" style={{marginTop:20,color:'white',marginLeft:150}}>Cadastre-se</Link>
+      
+      <Text style={{marginTop:20,color:'white',marginLeft:130}} onPress={esqueceuSenha}>Esqueceu a senha</Text>
     </View>
   );
 }
