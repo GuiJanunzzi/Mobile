@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { updatePassword,reauthenticateWithCredential , EmailAuthProvider} from 'firebase/auth';
 import { auth } from "../services/firebaseConfig"
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function AlterarSenhaScreen() {

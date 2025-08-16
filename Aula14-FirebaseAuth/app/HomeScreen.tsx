@@ -42,11 +42,16 @@ export default function HomeScreen() {
     )
   }
 
+  const alterarSenha = ()=>{
+    router.replace("/AlterarSenhaScreen")
+  }
+
   return (
     <SafeAreaView>
         <Text>Seja bem-vindo(a), você está logado(a)!</Text>
         <Button title="REALIZAR LOGOFF" onPress={realizarLogoff}/>
         <Button title="EXCLUIR CONTA" color="red" onPress={excluirConta}/>
+        <Button title="TROCAR A SENHA" onPress={alterarSenha}/>
     </SafeAreaView>
   )
 }
