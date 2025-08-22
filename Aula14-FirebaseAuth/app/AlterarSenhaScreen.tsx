@@ -56,6 +56,7 @@ export default function AlterarSenhaScreen() {
         style={styles.input}
         placeholder="Digite a nova senha"
         placeholderTextColor="#aaa"
+        secureTextEntry
         value={novaSenha}
         onChangeText={setNovaSenha}
       />
@@ -72,7 +73,7 @@ export default function AlterarSenhaScreen() {
 
       {/* Botão */}
       <TouchableOpacity style={styles.botao} onPress={handleAlterarSenha}>
-        <Text style={styles.textoBotao}>Cadastrar</Text>
+        <Text style={styles.textoBotao}>Alterar Senha</Text>
       </TouchableOpacity>
     </View>
   );
