@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Button, Text, TextInput, StyleSheet,Alert, FlatList } from "react-native"
+import { Button, Text, TextInput, StyleSheet,Alert, FlatList, ActivityIndicator } from "react-native"
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { auth,db,collection,addDoc,getDocs } from "../services/firebaseConfig"
@@ -10,7 +10,12 @@ import ItemLoja from "../components/ItemLoja";
 export default function HomeScreen() {
   const router = useRouter()
   const[nomeProduto,setNomeProduto]=useState('')
-  const[listaItems,setListaItems]=useState([])
+  interface Item{
+    id:string,
+    nomeProduto:string,
+    isChecked:boolean
+  }
+  const[listaItems,setListaItems]=useState<Item[]>([])
 
   const realizarLogoff = async ()=>{
     await AsyncStorage.removeItem("@user")
@@ -53,6 +58,7 @@ export default function HomeScreen() {
       })
       console.log("Produto criado com o ID: ",docRef.id);
       setNomeProduto('')//Limpa o Text Input
+      Alert.alert("Sucesso","Produto salvo com sucesso!")
     }catch(e){
       console.log("Erro ao criar o produto: ",e);
       
@@ -65,19 +71,13 @@ export default function HomeScreen() {
       const items:any = []
 
       querySnapshot.forEach((item)=>{
-        // items.push({
-        //   ...item.data(),
-        //   id:item.id
-        // })
-
-        setListaItems({
-          
+        items.push({
           ...item.data(),
-          id:item.id
+          id: item.id
         })
       })
-
-      console.log("Itens carregados: ", items);
+      setListaItems(items)
+      // console.log("Itens carregados: ", items);
       
     }catch(e){
       console.log("Erro ao carregar os items: ",e);
@@ -87,7 +87,7 @@ export default function HomeScreen() {
 
   useEffect(()=>{
     buscarProdutos()
-  },[])
+  },[listaItems])
   return (
     <SafeAreaView style={styles.container}>
         <Text>Seja bem-vindo(a), você está logado(a)!</Text>
@@ -95,6 +95,20 @@ export default function HomeScreen() {
         <Button title="EXCLUIR CONTA" color="red" onPress={excluirConta}/>
         <Button title="TROCAR A SENHA" onPress={()=>(router.replace("/AlterarSenhaScreen"))}/>
         
+        {listaItems.length<=0?<ActivityIndicator/>:(
+          <FlatList
+            data={listaItems}
+            renderItem={({item})=>{
+              return(
+                <ItemLoja 
+                  nomeProduto={item.nomeProduto}
+                  isChecked={item.isChecked}
+                  id={item.id}
+                />
+              )
+            }}
+          />
+        )}
 
         <TextInput
           placeholder="Digite o nome do produto"
@@ -103,6 +117,7 @@ export default function HomeScreen() {
           onChangeText={(value)=>setNomeProduto(value)}
           onSubmitEditing={salvarItem}
         />
+
     </SafeAreaView>
   )
 }
@@ -115,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor:'lightgray',
     width:'90%',
     alignSelf:'center',
-    marginTop:10,
+    marginTop:'auto',
     borderRadius:10,
     paddingLeft:20
   }
