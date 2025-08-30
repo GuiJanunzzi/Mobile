@@ -5,10 +5,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
+import { useTheme } from '../src/context/ThemeContext';
 
 export default function LoginScreen() {
+  const {theme,colors} = useTheme()//Vai acessar os valores do tema
   // Estados para armazenar os valores digitados
-
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
@@ -69,8 +70,8 @@ export default function LoginScreen() {
 
   }
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Realizar login</Text>
+    <View style={[styles.container,{backgroundColor:colors.background}]}>
+      <Text style={[styles.titulo,{color:colors.text}]}>Realizar login</Text>
 
 
       {/* Campo Email */}
@@ -95,13 +96,13 @@ export default function LoginScreen() {
       />
 
       {/* Botão */}
-      <TouchableOpacity style={styles.botao} onPress={handleLogin}>
+      <TouchableOpacity style={[styles.botao,{backgroundColor:colors.button}]} onPress={handleLogin}>
         <Text style={styles.textoBotao}>Login</Text>
       </TouchableOpacity>
 
-      <Link href="CadastrarScreen" style={{marginTop:20,color:'white',marginLeft:150}}>Cadastre-se</Link>
+      <Link href="CadastrarScreen" style={{marginTop:20,color:colors.text,marginLeft:150,fontWeight:600}}>Cadastre-se</Link>
       
-      <Text style={{marginTop:20,color:'white',marginLeft:130}} onPress={esqueceuSenha}>Esqueceu a senha</Text>
+      <Text style={{marginTop:20,color:colors.text,marginLeft:130,fontWeight:600}} onPress={esqueceuSenha}>Esqueceu a senha</Text>
     </View>
   );
 }
@@ -110,14 +111,12 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
     justifyContent: 'center',
     padding: 20,
   },
   titulo: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -132,7 +131,6 @@ const styles = StyleSheet.create({
     borderColor: '#333',
   },
   botao: {
-    backgroundColor: '#00B37E',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',

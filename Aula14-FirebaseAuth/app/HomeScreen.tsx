@@ -6,8 +6,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { auth,db,collection,addDoc,getDocs } from "../services/firebaseConfig"
 import { deleteUser } from "firebase/auth";
 import ItemLoja from "../components/ItemLoja";
+import ThemeToggleButton from "../src/components/ThemeToggleButton";
+import { useTheme } from "../src/context/ThemeContext";
 
 export default function HomeScreen() {
+  const {theme,colors} = useTheme()//Vai acessar os valores do tema
   const router = useRouter()
   const[nomeProduto,setNomeProduto]=useState('')
   interface Item{
@@ -89,12 +92,16 @@ export default function HomeScreen() {
     buscarProdutos()
   },[listaItems])
   return (
-    <SafeAreaView style={styles.container}>
-        <Text>Seja bem-vindo(a), você está logado(a)!</Text>
+    <SafeAreaView style={[styles.container,
+      // {backgroundColor:theme ==='dark'?'#121212':'#fff'}
+      {backgroundColor:colors.background}
+    ]}>
+        <Text style={[{color:colors.text}]}>Seja bem-vindo(a), você está logado(a)!</Text>
+        <ThemeToggleButton/>
         <Button title="REALIZAR LOGOFF" onPress={realizarLogoff}/>
         <Button title="EXCLUIR CONTA" color="red" onPress={excluirConta}/>
         <Button title="TROCAR A SENHA" onPress={()=>(router.replace("/AlterarSenhaScreen"))}/>
-        
+
         {listaItems.length<=0?<ActivityIndicator/>:(
           <FlatList
             data={listaItems}
