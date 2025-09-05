@@ -115,7 +115,7 @@ export default function LoginScreen() {
       <View style={
         {flexDirection:'row',
          justifyContent:'center',
-         marginBottom:15,
+         marginTop:15,
          gap:5}}>
         <TouchableOpacity 
           onPress={()=>mudarIdioma("en")} 
