@@ -3,9 +3,9 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { Button, Text, TextInput, StyleSheet,Alert, FlatList, ActivityIndicator } from "react-native"
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { auth,db,collection,addDoc,getDocs } from "../services/firebaseConfig"
+import { auth,db,collection,addDoc,getDocs } from "../src/services/firebaseConfig"
 import { deleteUser } from "firebase/auth";
-import ItemLoja from "../components/ItemLoja";
+import ItemLoja from "../src/components/ItemLoja";
 import ThemeToggleButton from "../src/components/ThemeToggleButton";
 import { useTheme } from "../src/context/ThemeContext";
 

@@ -4,11 +4,18 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../services/firebaseConfig';
+import { auth } from '../src/services/firebaseConfig';
 import { useTheme } from '../src/context/ThemeContext';
+import ThemeToggleButton from '../src/components/ThemeToggleButton';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
-  const {theme,colors} = useTheme()//Vai acessar os valores do tema
+  //Hook que fornece a funcção 't' para a tradução do idioma
+  const{t}=useTranslation()
+
+
+  //Colors do ThemeContext
+  const {theme,colors} = useTheme()
   // Estados para armazenar os valores digitados
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -71,14 +78,14 @@ export default function LoginScreen() {
   }
   return (
     <View style={[styles.container,{backgroundColor:colors.background}]}>
-      <Text style={[styles.titulo,{color:colors.text}]}>Realizar login</Text>
+      <Text style={[styles.titulo,{color:colors.text}]}>{t("login")}</Text>
 
 
       {/* Campo Email */}
       <TextInput
-        style={styles.input}
+        style={[styles.input,{color:colors.text}]}
         placeholder="E-mail"
-        placeholderTextColor="#aaa"
+        placeholderTextColor={colors.text}
         keyboardType="email-address"
         autoCapitalize="none"
         value={email}
@@ -87,9 +94,9 @@ export default function LoginScreen() {
 
       {/* Campo Senha */}
       <TextInput
-        style={styles.input}
+        style={[styles.input,{color:colors.text}]}
         placeholder="Senha"
-        placeholderTextColor="#aaa"
+        placeholderTextColor={colors.text}
         secureTextEntry
         value={senha}
         onChangeText={setSenha}
@@ -99,6 +106,7 @@ export default function LoginScreen() {
       <TouchableOpacity style={[styles.botao,{backgroundColor:colors.button}]} onPress={handleLogin}>
         <Text style={styles.textoBotao}>Login</Text>
       </TouchableOpacity>
+      <ThemeToggleButton/>
 
       <Link href="CadastrarScreen" style={{marginTop:20,color:colors.text,marginLeft:150,fontWeight:600}}>Cadastre-se</Link>
       
@@ -121,13 +129,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    backgroundColor: '#1E1E1E',
     color: '#fff',
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
     fontSize: 16,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#333',
   },
   botao: {
