@@ -5,5 +5,8 @@
     "confirmDelete": "Are you sure you want to delete your account?",
     "cancel": "Cancel",
     "delete": "Delete",
-    "login": "Log in"
+    "login": "Log in",
+    "password":"Password",
+    "signup":"Sign up",
+    "forgotpswd":"Forgot password?"
 }

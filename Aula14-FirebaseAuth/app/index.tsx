@@ -8,11 +8,16 @@ import { auth } from '../src/services/firebaseConfig';
 import { useTheme } from '../src/context/ThemeContext';
 import ThemeToggleButton from '../src/components/ThemeToggleButton';
 import { useTranslation } from 'react-i18next';
+import { changeLanguage } from 'i18next';
 
 export default function LoginScreen() {
   //Hook que fornece a funcção 't' para a tradução do idioma
-  const{t}=useTranslation()
+  const{t,i18n}=useTranslation()
 
+  //Função para mudar o idioma
+  const mudarIdioma = (lang:string)=>{
+    i18n.changeLanguage(lang)
+  }
 
   //Colors do ThemeContext
   const {theme,colors} = useTheme()
@@ -95,7 +100,7 @@ export default function LoginScreen() {
       {/* Campo Senha */}
       <TextInput
         style={[styles.input,{color:colors.text}]}
-        placeholder="Senha"
+        placeholder={t("password")}
         placeholderTextColor={colors.text}
         secureTextEntry
         value={senha}
@@ -106,11 +111,38 @@ export default function LoginScreen() {
       <TouchableOpacity style={[styles.botao,{backgroundColor:colors.button}]} onPress={handleLogin}>
         <Text style={styles.textoBotao}>Login</Text>
       </TouchableOpacity>
+
+      <View style={
+        {flexDirection:'row',
+         justifyContent:'center',
+         marginBottom:15,
+         gap:5}}>
+        <TouchableOpacity 
+          onPress={()=>mudarIdioma("en")} 
+          style={[styles.botao,{backgroundColor:"#FF5D5D"}]}
+        >
+          <Text>EN</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          onPress={()=>mudarIdioma("pt")}
+          style={[styles.botao,{backgroundColor:"#03FF5F"}]}
+        >
+          <Text>PT</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          onPress={()=>mudarIdioma("es")}
+          style={[styles.botao,{backgroundColor:"#F1DA05"}]}
+        >
+          <Text>ES</Text>
+        </TouchableOpacity>
+      </View>
       <ThemeToggleButton/>
 
-      <Link href="CadastrarScreen" style={{marginTop:20,color:colors.text,marginLeft:150,fontWeight:600}}>Cadastre-se</Link>
+      <Link href="CadastrarScreen" style={{marginTop:20,color:colors.text,marginLeft:150,fontWeight:600}}>{t("signup")}</Link>
       
-      <Text style={{marginTop:20,color:colors.text,marginLeft:130,fontWeight:600}} onPress={esqueceuSenha}>Esqueceu a senha</Text>
+      <Text style={{marginTop:20,color:colors.text,marginLeft:130,fontWeight:600}} onPress={esqueceuSenha}>{t("forgotpswd")}</Text>
     </View>
   );
 }

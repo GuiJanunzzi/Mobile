@@ -1,0 +1,12 @@
+{
+    "welcome": "¡Bienvenido(a)!",
+    "logout": "Cerrar sesión",
+    "deleteAccount": "Eliminar cuenta",
+    "confirmDelete": "¿Está seguro de que desea eliminar la cuenta?",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "login": "Iniciar sesión",
+    "password": "Contraseña",
+    "signup":"Regístrate",
+    "forgotpswd":"¿Olvidaste tu contraseña?"
+}
