@@ -8,11 +8,22 @@ import { deleteUser } from "firebase/auth";
 import ItemLoja from "../src/components/ItemLoja";
 import ThemeToggleButton from "../src/components/ThemeToggleButton";
 import { useTheme } from "../src/context/ThemeContext";
+import * as Notifications from "expo-notifications"
+
+Notifications.setNotificationHandler({
+    handleNotification:async()=>({
+        shouldShowAlert:true,
+        shouldPlaySound:true,//Toca o som
+        shouldSetBadge:false//Não altera o badge
+    })
+})
 
 export default function HomeScreen() {
   const {theme,colors} = useTheme()//Vai acessar os valores do tema
   const router = useRouter()
   const[nomeProduto,setNomeProduto]=useState('')
+  const[expoPushToken,setExpoPushToken]=useState<string|null>(null)
+
   interface Item{
     id:string,
     nomeProduto:string,
@@ -88,6 +99,57 @@ export default function HomeScreen() {
     }
   }
 
+  //Funçaõ para disparar a notificação local
+  const dispararNotificacao = async()=>{
+    await Notifications.scheduleNotificationAsync({
+      content:{
+          title:"Promoções do dia!",
+          body:"Aproveite as melhores ofertas"
+      },
+      trigger:{
+          type:"timeInterval",//tipo de trigger: intervalo de tempo
+          seconds:2,//aguarda 02 segundos para disparar
+          repeats:false
+      } as Notifications.TimeIntervalTriggerInput
+    })
+  }
+
+  const registerForPushNotificationsAsync = async ():Promise<string|null> =>{
+      try{
+          const tokenData = await Notifications.getExpoPushTokenAsync()
+          const token  = tokenData.data
+          console.log("Token gerado com sucesso: ",token)
+          return token
+      }catch(error){
+          console.log("Error ao gerar token",error)
+          return null
+      }
+  }
+  useEffect(()=>{
+        //Ficar escutando se houve recebimento de notificação
+        const subscription = Notifications.addNotificationReceivedListener(notification =>{
+            console.log("Notificação recebida: ", notification)
+        })
+        //Função de limpeza que irá ser chamada quando for desfeito
+        //Remove o listener para evitar multiplas chamadas.
+        return ()=>subscription.remove()
+    },[])
+
+  useEffect(()=>{
+    //Solicitar a permissão das notificações do aparelho
+    (async()=>{
+      //Verifica o stests da permissão das notificações do dispositivo
+      const{status:existingStatus} = await Notifications.getPermissionsAsync()
+      let finalStatus = existingStatus
+
+      //Solicita a permissão das notificações do dispositivo
+      if(existingStatus!=="granted"){
+        const{status} = await Notifications.requestPermissionsAsync()
+        finalStatus=status
+      }
+    })()
+  },[])
+
   useEffect(()=>{
     buscarProdutos()
   },[listaItems])
@@ -101,6 +163,7 @@ export default function HomeScreen() {
         <Button title="REALIZAR LOGOFF" onPress={realizarLogoff}/>
         <Button title="EXCLUIR CONTA" color="red" onPress={excluirConta}/>
         <Button title="TROCAR A SENHA" onPress={()=>(router.replace("/AlterarSenhaScreen"))}/>
+        <Button title="DISPARAR NOTIFICAÇÃO" color="purple" onPress={dispararNotificacao}/>
 
         {listaItems.length<=0?<ActivityIndicator/>:(
           <FlatList
