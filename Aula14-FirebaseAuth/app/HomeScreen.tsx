@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Button, Text, TextInput, StyleSheet,Alert, FlatList, ActivityIndicator } from "react-native"
 import { useRouter } from "expo-router";
@@ -12,7 +13,7 @@ import * as Notifications from "expo-notifications"
 
 Notifications.setNotificationHandler({
     handleNotification:async()=>({
-        shouldShowAlert:true,
+        shouldShowAlert:true, /// SDK 52 usa Alert
         shouldPlaySound:true,//Toca o som
         shouldSetBadge:false//Não altera o badge
     })
@@ -107,7 +108,6 @@ export default function HomeScreen() {
           body:"Aproveite as melhores ofertas"
       },
       trigger:{
-          type:"timeInterval",//tipo de trigger: intervalo de tempo
           seconds:2,//aguarda 02 segundos para disparar
           repeats:false
       } as Notifications.TimeIntervalTriggerInput
@@ -125,6 +125,16 @@ export default function HomeScreen() {
           return null
       }
   }
+
+  useEffect(()=>{
+    (async()=>{
+      //Registrar o dispositivo com serviço de notificação
+      const token = await registerForPushNotificationsAsync()
+      //Armazenar o token no estado
+      setExpoPushToken(token)
+    })()
+  }, [])
+
   useEffect(()=>{
         //Ficar escutando se houve recebimento de notificação
         const subscription = Notifications.addNotificationReceivedListener(notification =>{
@@ -164,7 +174,11 @@ export default function HomeScreen() {
         <Button title="EXCLUIR CONTA" color="red" onPress={excluirConta}/>
         <Button title="TROCAR A SENHA" onPress={()=>(router.replace("/AlterarSenhaScreen"))}/>
         <Button title="DISPARAR NOTIFICAÇÃO" color="purple" onPress={dispararNotificacao}/>
-
+        {expoPushToken?(
+          <Text>Token gerado com sucesso: {expoPushToken}</Text>):(
+            <Text>Gerando token...</Text>
+          )
+        }
         {listaItems.length<=0?<ActivityIndicator/>:(
           <FlatList
             data={listaItems}
