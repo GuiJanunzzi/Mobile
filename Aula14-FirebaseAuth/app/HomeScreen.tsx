@@ -10,6 +10,7 @@ import ItemLoja from "../src/components/ItemLoja";
 import ThemeToggleButton from "../src/components/ThemeToggleButton";
 import { useTheme } from "../src/context/ThemeContext";
 import * as Notifications from "expo-notifications"
+import { useAuth } from "@clerk/clerk-expo";
 
 Notifications.setNotificationHandler({
     handleNotification:async()=>({
@@ -20,6 +21,7 @@ Notifications.setNotificationHandler({
 })
 
 export default function HomeScreen() {
+  const{signOut} = useAuth()
   const {theme,colors} = useTheme()//Vai acessar os valores do tema
   const router = useRouter()
   const[nomeProduto,setNomeProduto]=useState('')
@@ -34,6 +36,7 @@ export default function HomeScreen() {
 
   const realizarLogoff = async ()=>{
     await AsyncStorage.removeItem("@user")
+    await signOut()//Encerra sessão Clerk + Google
     router.replace('/')
   }
 

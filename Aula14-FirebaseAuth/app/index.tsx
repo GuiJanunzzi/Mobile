@@ -9,6 +9,7 @@ import { useTheme } from '../src/context/ThemeContext';
 import ThemeToggleButton from '../src/components/ThemeToggleButton';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from 'i18next';
+import GoogleSignIn from "../src/components/GoogleSignIn"
 
 export default function LoginScreen() {
   //Hook que fornece a funcção 't' para a tradução do idioma
@@ -138,6 +139,8 @@ export default function LoginScreen() {
           <Text>ES</Text>
         </TouchableOpacity>
       </View>
+
+      <GoogleSignIn/>
       <ThemeToggleButton/>
 
       <Link href="CadastrarScreen" style={{marginTop:20,color:colors.text,marginLeft:150,fontWeight:600}}>{t("signup")}</Link>
